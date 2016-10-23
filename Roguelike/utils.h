@@ -12,6 +12,7 @@ struct Point
 
 	Point(int _row, int _col);
 
+	friend bool operator==(const Point &a, const Point &b);
 	friend bool operator!=(const Point &a, const Point &b);
 };
 

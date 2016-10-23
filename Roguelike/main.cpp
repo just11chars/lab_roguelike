@@ -10,7 +10,7 @@ int main()
 	init();
 	
 	WINDOW *field = newwin(25, 70, 5, 2);
-	WINDOW *player_info = newwin(10, 20, 0, 72);
+	WINDOW *player_info = newwin(10, 25, 0, 72);
 	
 	for (char i = COLOR_BLACK; i <= COLOR_WHITE; ++i)
 		for (char j = COLOR_BLACK; j <= COLOR_WHITE; ++j)

@@ -20,6 +20,7 @@ public:
 
 private:
 	void UpdatePlayerInformation();
+	void ClearInvalidUnits();
 
 	Map *map;
 	Knight *player;

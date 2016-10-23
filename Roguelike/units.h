@@ -1,20 +1,36 @@
 #pragma once
 #include <string>
+#include <vector>
 
 #include "map.h"
+
+class Peacefull;
+class Monster;
 
 class Unit
 {
 public:
-	virtual int HealthPoints() = 0;
+	virtual int MaxHealth() = 0;
+	virtual int Health() = 0;
 	virtual int Damage() = 0;
 
-	virtual void Move() = 0;
+	virtual void Move(std::vector<Unit*> &units) = 0;
+
 	virtual void Draw(WINDOW *window, Point shift) = 0;
 	virtual Point Position() = 0;
 
 	virtual void Hit(Unit*) = 0;
-	virtual void ReceiveDamage(int rec_damage) = 0;
+	virtual void Hit(Peacefull*) = 0;
+	virtual void Hit(Monster*) = 0;
+
+	virtual void ReceiveDamage(Unit*) = 0;
+	virtual void ReceiveDamage(Peacefull*) = 0;
+	virtual void ReceiveDamage(Monster *) = 0;
+
+	friend class Level;
+
+protected:
+	bool invalid = false;
 };
 
 class Map;
@@ -25,20 +41,19 @@ public:
 	Character(std::string _name, int _health, int _damage,
 		Map *_map, int _row, int _col, char _symbol, int _color);
 	
-	int HealthPoints() override;
-
+	int Health() override;
+	int MaxHealth() override;
 	int Damage() override;
 	Point Character::Position() override;
 
-	void Move() override;
+	bool TryMove(std::vector<Unit*> &units, int row, int col);
+	void Move(std::vector<Unit*> &units) override;
 	void Draw(WINDOW *window, Point shift) override;
-
-	void Hit(Unit*) override;
-	void ReceiveDamage(int rec_damage) override;
 
 protected:
 	std::string name;
-	int health, damage;
+	int health, max_health;
+	int damage;
 
 	Map *map;
 	int row, col;
@@ -47,16 +62,43 @@ protected:
 	char symbol;
 };
 
+class Monster;
+
 class Peacefull : public Character
 {
 public:
 	Peacefull(std::string _name, int _health, int _mana, int _damage,
 		Map *_map, int _row, int _col, char _symbol, int _color);
 
-	int ManaPoints();
+	int Level();
+	int Experience();
+	int NextLevelExperience();
+	
+	int MaxMana();
+	int Mana();
+	void ReceiveExperience(Monster*);
+
+	void Regenerate();
+
+	void Hit(Unit*) override;
+	void Hit(Peacefull*);
+	void Hit(Monster*);
+
+	void ReceiveDamage(Unit*) override;
+	void ReceiveDamage(Peacefull*);
+	void ReceiveDamage(Monster*);
 
 protected:
-	int mana;
+	static const int level_exp = 15;
+	static const int level_health = 4;
+	static const int level_mana = 3;
+	static const int level_damage = 2;
+	static const int regen_cycle = 3;
+
+	int mana, max_mana;
+	int experience;
+	int level;
+	int regen;
 };
 
 class Knight : public Peacefull
@@ -64,7 +106,7 @@ class Knight : public Peacefull
 public:
 	Knight(std::string name, Map *_map, int row, int col);
 
-	void Move() override;
+	void Move(std::vector<Unit*> &units);
 };
 
 class Princess : public Peacefull
@@ -72,14 +114,29 @@ class Princess : public Peacefull
 public:
 	Princess(std::string name, Map *_map, int row, int col);
 
-	void Move() override;
+	void Move(std::vector<Unit*> &units);
 };
 
 class Monster : public Character
 {
 public:
 	Monster(std::string _name, int _health, int _damage,
+		int _exp_award,
 		Map *_map, int _row, int _col, char _symbol, int _color);
+
+	int ExperinceAward();
+
+	void Hit(Unit*) override;
+	void Hit(Peacefull*);
+	void Hit(Monster*);
+
+	void ReceiveDamage(Unit*) override;
+	void ReceiveDamage(Peacefull*);
+	void ReceiveDamage(Monster*);
+
+	//void Move(std::vector<Unit*> &units);
+private:
+	int experience_award;
 };
 
 class Zombie : public Monster
