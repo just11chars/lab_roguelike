@@ -46,6 +46,11 @@ Rect::Rect(int _r0, int _c0, int _r1, int _c1)
 	c1 = _c1;
 }
 
+bool operator!=(const Point &a, const Point &b)
+{
+	return a.row != b.row || a.col != b.col;
+}
+
 bool Rect::PointInside(int row, int col)
 {
 	return r0 <= row && row <= r1 &&

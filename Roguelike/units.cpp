@@ -10,13 +10,12 @@ using std::pair;
 #include "units.h"
 #include "map.h"
 
-Character::Character(string _name, int _health, int _damage, int _mana,
+Character::Character(string _name, int _health, int _damage,
 	Map *_map, int _row, int _col, char _symbol, int _color)
 {
 	name = _name;
 	health = _health;
 	damage = _damage;
-	mana = _mana;
 
 	map = _map;
 	row = _row;
@@ -29,11 +28,6 @@ Character::Character(string _name, int _health, int _damage, int _mana,
 int Character::HealthPoints()
 {
 	return health;
-}
-
-int Character::ManaPoints()
-{
-	return mana;
 }
 
 int Character::Damage()
@@ -57,11 +51,11 @@ void Character::Draw(WINDOW *window, Point shift)
 	int c = col - shift.col;
 
 	char background = map->GetCell(r, c).bg_color;
-	init_pair(1, color, background);
-	
-	wattron(window, COLOR_PAIR(1));
+	int pair_index = 1 + 8 * color + background;
+
+	wattron(window, COLOR_PAIR(pair_index));
 	mvwaddch(window, 1 + r, 1 + c, symbol);
-	wattroff(window, COLOR_PAIR(1));
+	wattroff(window, COLOR_PAIR(pair_index));
 }
 
 
@@ -75,9 +69,20 @@ void Character::ReceiveDamage(int rec_damage)
 	health -= rec_damage;
 }
 
+Peacefull::Peacefull(std::string _name, int _health, int _mana, int _damage,
+	Map *_map, int _row, int _col, char _symbol, int _color)
+	: Character(_name, _health, _damage, _map, _row, _col, _symbol, _color)
+{
+	mana = _mana;
+}
+
+int Peacefull::ManaPoints()
+{
+	return mana;
+}
 
 Knight::Knight(string name, Map *_map, int row, int col)
-	: Character(name, 100, 5, 50, _map, row, col, '@', COLOR_YELLOW)
+	: Peacefull(name, 100, 50, 5, _map, row, col, '@', COLOR_YELLOW)
 {
 	;
 }
@@ -87,29 +92,42 @@ void Knight::Move()
 	int key = getch();
 	if (key == KEY_UP) {
 		if (map->IsCellFree(row - 1, col))
-			row = max(0, row - 1);
+			--row;
 	}
 	else if (key == KEY_DOWN) {
 		if (map->IsCellFree(row + 1, col))
-			row = min(map->MaxRow(), row + 1);
+			++row;
 	}
 	else if (key == KEY_LEFT) {
 		if (map->IsCellFree(row, col - 1))
-			col = max(0, col - 1);
+			--col;
 	}
-	else {
+	else if (key == KEY_RIGHT) {
 		if (map->IsCellFree(row, col + 1))
-			col = min(map->MaxCol(), col + 1);
+			++col;
 	}
 }
 
 Princess::Princess(std::string name, Map * _map, int row, int col)
-	: Character(name, 10000, 0, 0, _map, row, col, 'P', COLOR_YELLOW)
+	: Peacefull(name, 10000, 0, 0, _map, row, col, 'P', COLOR_YELLOW)
 {
-
+	;
 }
 
 void Princess::Move()
 {
 	// she just stays at place
+}
+
+Monster::Monster(std::string _name, int _health, int _damage,
+	Map *_map, int _row, int _col, char _symbol, int _color)
+	: Character(_name, _health, _damage, _map, _row, _col, _symbol, _color)
+{
+	;
+}
+
+Zombie::Zombie(Map *_map, int row, int col)
+	: Monster("Zombie", 20, 3, _map, row, col, 'Z', COLOR_CYAN)
+{
+	;
 }

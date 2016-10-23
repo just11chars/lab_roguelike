@@ -10,15 +10,16 @@ int main()
 	init();
 	
 	WINDOW *field = newwin(25, 70, 5, 2);
-	box(field, 0, 0);
-	wrefresh(field);
-
 	WINDOW *player_info = newwin(10, 20, 0, 72);
 	
+	for (char i = COLOR_BLACK; i <= COLOR_WHITE; ++i)
+		for (char j = COLOR_BLACK; j <= COLOR_WHITE; ++j)
+			init_pair(1 + 8 * i + j, i, j);
+
 	Level level(LT_RANDOM, 100, 100, field, "name", player_info);
 
-	while (true) {
-		level.Iterate();
+	while (level.Iterate()) {
+		;
 	}
 
 	getch();

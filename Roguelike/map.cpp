@@ -22,7 +22,9 @@ void init_cell_types()
 	_cells[CS_WALL] = Cell(COLOR_WHITE, COLOR_BLACK, '#');
 	_cells[CS_CURSED] = Cell(COLOR_CYAN, COLOR_MAGENTA, '.');
 
-	init_pair(1, COLOR_CYAN, COLOR_RED);
+	//for (char i = COLOR_BLACK; i <= COLOR_WHITE; ++i)
+	//	for (char j = COLOR_BLACK; j <= COLOR_WHITE; ++j)
+	//		init_pair(1 + 8 * i + j, i, j);
 }
 
 Cell::Cell()
@@ -52,7 +54,7 @@ Cell Map::GetCell(int row, int col)
 bool Map::IsCellFree(int row, int col)
 {
 	CellState st = GetCellState(row, col);
-	return st != CS_WALL && st != CS_UNDEF;
+	return IsCellValid(row, col) && st != CS_WALL && st != CS_UNDEF;
 }
 
 bool Map::IsCellValid(int row, int col)

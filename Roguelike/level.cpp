@@ -18,11 +18,14 @@ void Level::GenerateRandom(int rows, int cols, WINDOW *wind, std::string playerN
 	player = new Knight(playerName, map, rand() % rows, rand() % cols);
 	view = new View(wind, map, player);
 
-	Princess* pr = new Princess("RichBitch", map, rand() % rows, rand() % cols);
+	Princess* pr = new Princess("princess", map, rand() % rows, rand() % cols);
 	units.push_back(pr);
+
+	for (int i = 0; i < rows / 20 + cols / 20; ++i)
+		units.push_back(new Zombie(map, rand() % rows, rand() % cols));
 }
 
-void Level::Iterate()
+bool Level::Iterate()
 {
 	player->Move();
 	for each (Unit *u in units)
@@ -30,6 +33,8 @@ void Level::Iterate()
 
 	UpdatePlayerInformation();
 	view->Update(units);
+
+	return player->HealthPoints() > 0 && player->Position() != units[0]->Position();
 }
 
 void Level::UpdatePlayerInformation()
