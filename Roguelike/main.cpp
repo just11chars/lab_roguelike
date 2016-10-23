@@ -9,29 +9,16 @@ int main()
 {
 	init();
 	
-	WINDOW *field = newwin(25, 70, 5, 10);
+	WINDOW *field = newwin(25, 70, 5, 2);
 	box(field, 0, 0);
 	wrefresh(field);
+
+	WINDOW *player_info = newwin(10, 20, 0, 72);
 	
-	/*
-	Map map(100, 100);
-	Knight player("name", &map, 3, 3);
-	View view(field, &map, &player);
-	
-	Princess princess("princess name", &map, 70, 70);
-
-	view.Update();
-
-	while (true) {
-		player.Move();
-		view.Update();
-	}*/
-
-	Level level(LT_RANDOM, 100, 100, field, "name");
+	Level level(LT_RANDOM, 100, 100, field, "name", player_info);
 
 	while (true) {
 		level.Iterate();
-		refresh();
 	}
 
 	getch();

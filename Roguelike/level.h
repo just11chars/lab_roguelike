@@ -14,13 +14,16 @@ enum LevelType {
 class Level
 {
 public:
-	Level(LevelType lt, int map_rows, int map_cols, WINDOW *window, std::string playerName);
+	Level(LevelType lt, int map_rows, int map_cols, WINDOW *window, std::string playerName, WINDOW *_player_info);
 	void GenerateRandom(int rows, int cols, WINDOW *wind, std::string playerName);
 	void Iterate();
 
 private:
+	void UpdatePlayerInformation();
+
 	Map *map;
 	Knight *player;
 	View *view;
 	std::vector<Unit*> units;
+	WINDOW *player_info;
 };

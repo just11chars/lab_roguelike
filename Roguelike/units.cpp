@@ -10,12 +10,13 @@ using std::pair;
 #include "units.h"
 #include "map.h"
 
-Character::Character(string _name, int _health, int _damage,
+Character::Character(string _name, int _health, int _damage, int _mana,
 	Map *_map, int _row, int _col, char _symbol, int _color)
 {
 	name = _name;
 	health = _health;
 	damage = _damage;
+	mana = _mana;
 
 	map = _map;
 	row = _row;
@@ -28,6 +29,11 @@ Character::Character(string _name, int _health, int _damage,
 int Character::HealthPoints()
 {
 	return health;
+}
+
+int Character::ManaPoints()
+{
+	return mana;
 }
 
 int Character::Damage()
@@ -59,8 +65,19 @@ void Character::Draw(WINDOW *window, Point shift)
 }
 
 
+void Character::Hit(Unit *u)
+{
+	u->ReceiveDamage(this->Damage());
+}
+
+void Character::ReceiveDamage(int rec_damage)
+{
+	health -= rec_damage;
+}
+
+
 Knight::Knight(string name, Map *_map, int row, int col)
-	: Character(name, 100, 5, _map, row, col, '@', COLOR_YELLOW)
+	: Character(name, 100, 5, 50, _map, row, col, '@', COLOR_YELLOW)
 {
 	;
 }
@@ -87,7 +104,7 @@ void Knight::Move()
 }
 
 Princess::Princess(std::string name, Map * _map, int row, int col)
-	: Character(name, 10000, 0, _map, row, col, 'P', COLOR_YELLOW)
+	: Character(name, 10000, 0, 0, _map, row, col, 'P', COLOR_YELLOW)
 {
 
 }

@@ -64,7 +64,7 @@ Map::Map(int _rows, int _cols)
 {
 	rows = _rows;
 	cols = _cols;
-	GenerateRectangle(rows, cols, 0.1);
+	GenerateRectangle(rows, cols, 0.05);
 }
 
 int Map::MaxRow()
@@ -126,7 +126,6 @@ Rect View::GetMapRect()
 void View::Update(vector<Unit*> &units)
 {
 	Rect rect(GetMapRect());
-	wclear(window);
 	
 	for (int i = rect.r0; i <= rect.r1; ++i)
 		for (int j = rect.c0; j <= rect.c1; ++j)
