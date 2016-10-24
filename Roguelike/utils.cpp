@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <curses.h>
+#include <map>
 
 #include "utils.h"
 #include "map.h"
@@ -25,6 +26,7 @@ void init()
 {
 	init_utils();
 	init_curses();
+	init_keys();
 }
 
 bool rand_event(double prob)
@@ -75,4 +77,23 @@ bool Rect::PointInside(int row, int col)
 bool Rect::PointInside(Point p)
 {
 	return PointInside(p.row, p.col);
+}
+
+std::map<int, Point*> _key_movements;
+
+void init_keys()
+{
+	_key_movements[KEY_A1] = new Point(-1, -1);
+	_key_movements[KEY_A2] = new Point(-1, 0);
+	_key_movements[KEY_A3] = new Point(-1, 1);
+
+	_key_movements[KEY_B1] = new Point(0, -1);
+	_key_movements[KEY_B2] = new Point(0, 0);
+	_key_movements[KEY_B3] = new Point(0, 1);
+
+	_key_movements[KEY_C1] = new Point(+1, -1);
+	_key_movements[KEY_C2] = new Point(+1, 0);
+	_key_movements[KEY_C3] = new Point(+1, 1);
+
+	_key_movements[' '] = new Point(0, 0);
 }

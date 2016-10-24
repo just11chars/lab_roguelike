@@ -1,8 +1,10 @@
 #pragma once
+#include <map>
 
 void init();
 void init_utils();
 void init_curses();
+void init_keys();
 
 bool rand_event(double prob);
 
@@ -27,3 +29,5 @@ struct Rect
 	bool PointInside(int row, int col);
 	bool PointInside(Point p);
 };
+
+extern std::map<int, Point*> _key_movements;

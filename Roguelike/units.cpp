@@ -187,17 +187,10 @@ void Knight::Move(vector<Unit*> &units)
 {
 	int key;
 	while (key = getch()) {
-		if (key == KEY_UP && TryMove(units, row - 1, col)) {
-			break;
-		}
-		else if (key == KEY_DOWN && TryMove(units, row + 1, col)) {
-			break;
-		}
-		else if (key == KEY_LEFT && TryMove(units, row, col - 1)) {
-			break;
-		}
-		else if (key == KEY_RIGHT && TryMove(units, row, col + 1)) {
-			break;
+		if (_key_movements.count(key)) {
+			Point *delta = _key_movements[key];
+			if (TryMove(units, row + delta->row, col + delta->col))
+				break;
 		}
 	}
 
