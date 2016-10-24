@@ -24,17 +24,8 @@ void Level::GenerateRandom(int rows, int cols, WINDOW *wind, std::string playerN
 	units.push_back(player);
 	units.push_back(princess);
 
-	for (int i = 0; i < rows / 2 + cols / 2; ++i) {
-		int row = rand() % rows;
-		int col = rand() % cols;
-
-		while (!map->IsCellFree(row, col)) {
-			row = rand() % rows;
-			col = rand() % cols;
-		}
-
-		units.push_back(new Zombie(map, row, col));
-	}
+	GenerateUnits<Zombie>(rows / 3 + cols / 3, rows, cols);
+	GenerateUnits<Dragon>(rows / 30 + cols / 30, rows, cols);
 }
 
 bool Level::Iterate()
@@ -72,5 +63,30 @@ void Level::ClearInvalidUnits()
 		else {
 			++it;
 		}
+	}
+}
+
+bool Level::CellWithUnit(int row, int col)
+{
+	for each (Unit *u in units) {
+		if (u->Position() == Point(row, col))
+			return true;
+	}
+	return false;
+}
+
+template <class T>
+void Level::GenerateUnits(int count, int rows, int cols)
+{
+	while (count--) {
+		int row = rand() % rows;
+		int col = rand() % cols;
+
+		while (!map->IsCellFree(row, col) && CellWithUnit(row, col)) {
+			row = rand() % rows;
+			col = rand() % cols;
+		}
+
+		units.push_back(new T(map, row, col));
 	}
 }

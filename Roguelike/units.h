@@ -112,7 +112,7 @@ public:
 	Princess(std::string name, Map *_map, int row, int col);
 
 	void Move(std::vector<Unit*> &units) override;
-	void ReceiveDamage(Knight*);
+	void ReceiveDamage(Peacefull *u);
 	bool IsSaved();
 
 private:
@@ -147,4 +147,10 @@ class Zombie : public Monster
 {
 public:
 	Zombie(Map *_map, int row, int col);
+};
+
+class Dragon : public Monster
+{
+public:
+	Dragon(Map *_map, int row, int col);
 };

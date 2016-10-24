@@ -21,6 +21,10 @@ public:
 private:
 	void UpdatePlayerInformation();
 	void ClearInvalidUnits();
+	bool CellWithUnit(int row, int col);
+
+	template <class T>
+	void GenerateUnits(int count, int rows, int cols);
 
 	Knight *player;
 	Princess *princess;

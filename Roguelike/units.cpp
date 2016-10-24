@@ -208,7 +208,7 @@ void Princess::Move(vector<Unit*> &units)
 	// she just stays at place
 }
 
-void Princess::ReceiveDamage(Knight *k)
+void Princess::ReceiveDamage(Peacefull *u)
 {
 	saved = true;
 }
@@ -292,4 +292,10 @@ Zombie::Zombie(Map *_map, int row, int col)
 	: Monster("Zombie", 10, 2, 4, 8, _map, row, col, 'Z', COLOR_CYAN)
 {
 	;
+}
+
+Dragon::Dragon(Map *_map, int row, int col)
+	: Monster("Dragon", 40, 5, 30, 10, _map, row, col, 'D', COLOR_RED)
+{
+
 }
