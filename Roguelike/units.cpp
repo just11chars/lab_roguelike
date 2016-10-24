@@ -48,11 +48,6 @@ Point Character::Position()
 	return Point(row, col);
 }
 
-void Character::Move(vector<Unit*> &units)
-{
-	;
-}
-
 bool Character::TryMove(vector<Unit*> &units, int _row, int _col)
 {
 	if (map->IsCellFree(_row, _col)) {
@@ -212,7 +207,7 @@ void Knight::Move(vector<Unit*> &units)
 Princess::Princess(std::string name, Map * _map, int row, int col)
 	: Peacefull(name, 10000, 0, 0, _map, row, col, 'P', COLOR_YELLOW)
 {
-	;
+	saved = false;
 }
 
 void Princess::Move(vector<Unit*> &units)
@@ -220,12 +215,23 @@ void Princess::Move(vector<Unit*> &units)
 	// she just stays at place
 }
 
+void Princess::ReceiveDamage(Knight *k)
+{
+	saved = true;
+}
+
+bool Princess::IsSaved()
+{
+	return saved;
+}
+
 Monster::Monster(std::string _name, int _health, int _damage,
-	int _exp_award,
+	int _exp_award, int _vis_radius,
 	Map *_map, int _row, int _col, char _symbol, int _color)
 	: Character(_name, _health, _damage, _map, _row, _col, _symbol, _color)
 {
 	experience_award = _exp_award;
+	visibility_radius = _vis_radius;
 }
 
 int Monster::ExperinceAward()
@@ -269,8 +275,28 @@ void Monster::ReceiveDamage(Monster *u)
 	;
 }
 
+
+void Monster::Move(vector<Unit*> &units)
+{
+	for each (Unit *u in units)
+	{
+		Point diff = u->Position() - Position();
+		if (dynamic_cast<Peacefull*>(u) && diff.Length() <= visibility_radius)
+		{
+			if (diff.row)
+				diff.row /= abs(diff.row);
+			if (diff.col)
+				diff.col /= abs(diff.col);
+
+			if (!TryMove(units, row + diff.row, col + diff.col))
+				if (!TryMove(units, row + diff.row, col))
+					TryMove(units, row, col + diff.col);
+		}
+	}
+}
+
 Zombie::Zombie(Map *_map, int row, int col)
-	: Monster("Zombie", 10, 2, 4, _map, row, col, 'Z', COLOR_CYAN)
+	: Monster("Zombie", 10, 2, 4, 8, _map, row, col, 'Z', COLOR_CYAN)
 {
 	;
 }

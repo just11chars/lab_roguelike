@@ -47,7 +47,6 @@ public:
 	Point Character::Position() override;
 
 	bool TryMove(std::vector<Unit*> &units, int row, int col);
-	void Move(std::vector<Unit*> &units) override;
 	void Draw(WINDOW *window, Point shift) override;
 
 protected:
@@ -61,8 +60,6 @@ protected:
 	int color;
 	char symbol;
 };
-
-class Monster;
 
 class Peacefull : public Character
 {
@@ -106,7 +103,7 @@ class Knight : public Peacefull
 public:
 	Knight(std::string name, Map *_map, int row, int col);
 
-	void Move(std::vector<Unit*> &units);
+	void Move(std::vector<Unit*> &units) override;
 };
 
 class Princess : public Peacefull
@@ -114,14 +111,19 @@ class Princess : public Peacefull
 public:
 	Princess(std::string name, Map *_map, int row, int col);
 
-	void Move(std::vector<Unit*> &units);
+	void Move(std::vector<Unit*> &units) override;
+	void ReceiveDamage(Knight*);
+	bool IsSaved();
+
+private:
+	bool saved;
 };
 
 class Monster : public Character
 {
 public:
 	Monster(std::string _name, int _health, int _damage,
-		int _exp_award,
+		int _exp_award, int _vis_radius,
 		Map *_map, int _row, int _col, char _symbol, int _color);
 
 	int ExperinceAward();
@@ -134,9 +136,11 @@ public:
 	void ReceiveDamage(Peacefull*);
 	void ReceiveDamage(Monster*);
 
-	//void Move(std::vector<Unit*> &units);
+	void Move(std::vector<Unit*> &units);
+
 private:
 	int experience_award;
+	int visibility_radius;
 };
 
 class Zombie : public Monster

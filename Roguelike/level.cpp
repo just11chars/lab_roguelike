@@ -20,8 +20,9 @@ void Level::GenerateRandom(int rows, int cols, WINDOW *wind, std::string playerN
 	player = new Knight(playerName, map, rand() % rows, rand() % cols);
 	view = new View(wind, map, player);
 
-	Princess* pr = new Princess("princess", map, rand() % rows, rand() % cols);
-	units.push_back(pr);
+	princess = new Princess("princess", map, rand() % rows, rand() % cols);
+	units.push_back(player);
+	units.push_back(princess);
 
 	for (int i = 0; i < rows / 2 + cols / 2; ++i) {
 		int row = rand() % rows;
@@ -40,19 +41,20 @@ bool Level::Iterate()
 {
 	ClearInvalidUnits();
 
-	player->Move(units);
 	for each (Unit *u in units)
 		u->Move(units);
 
 	UpdatePlayerInformation();
 	view->Update(units);
 
-	return player->Health() > 0 && player->Position() != units[0]->Position();
+	return player->Health() > 0 && !princess->IsSaved();
 }
 
 void Level::UpdatePlayerInformation()
 {
+	wclear(player_info);
 	box(player_info, 0, 0);
+
 	//mvwaddstr(player_info, 1, (player_info->_maxx - strlen("Player")) / 2, "Player");
 	mvwprintw(player_info, 1, 1, "Level %d ( %d / %d )", player->Level(), player->Experience(), player->NextLevelExperience());
 	mvwprintw(player_info, 3, 1, "%-10s%d / %d", "Health", player->Health(), player->MaxHealth());

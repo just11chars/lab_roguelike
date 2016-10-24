@@ -38,6 +38,11 @@ Point::Point(int _row, int _col)
 	col = _col;
 }
 
+int Point::Length()
+{
+	return abs(row) + abs(col);
+}
+
 bool operator==(const Point &a, const Point &b)
 {
 	return a.row == b.row && a.col == b.col;
@@ -46,6 +51,11 @@ bool operator==(const Point &a, const Point &b)
 bool operator!=(const Point &a, const Point &b)
 {
 	return !(a == b);
+}
+
+Point operator-(const Point &a, const Point &b)
+{
+	return Point(a.row - b.row, a.col - b.col);
 }
 
 Rect::Rect(int _r0, int _c0, int _r1, int _c1)

@@ -22,9 +22,11 @@ private:
 	void UpdatePlayerInformation();
 	void ClearInvalidUnits();
 
-	Map *map;
 	Knight *player;
-	View *view;
+	Princess *princess;
 	std::vector<Unit*> units;
+
+	Map *map;
+	View *view;
 	WINDOW *player_info;
 };

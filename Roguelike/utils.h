@@ -11,9 +11,11 @@ struct Point
 	int row, col;
 
 	Point(int _row, int _col);
+	int Length();
 
 	friend bool operator==(const Point &a, const Point &b);
 	friend bool operator!=(const Point &a, const Point &b);
+	friend Point operator-(const Point &a, const Point &b);
 };
 
 struct Rect
