@@ -57,12 +57,9 @@ public:
 	virtual void Hit(Peacefull*) = 0;
 	virtual void Hit(Monster*) = 0;
 
-	void ReceiveDamage(Projectile*) override;
-	virtual void ReceiveDamage(Unit*) = 0;
-	virtual void ReceiveDamage(Peacefull*) = 0;
-	virtual void ReceiveDamage(Monster*) = 0;
-
 protected:
+	void Die();
+
 	std::string name;
 	int health, max_health;
 	int damage;
@@ -97,6 +94,7 @@ public:
 	void ReceiveDamage(Unit*) override;
 	void ReceiveDamage(Peacefull*) override;
 	void ReceiveDamage(Monster*) override;
+	void ReceiveDamage(Projectile*) override;
 
 protected:
 	static const int level_exp = 15;
@@ -148,6 +146,7 @@ public:
 	void ReceiveDamage(Unit*) override;
 	void ReceiveDamage(Peacefull*) override;
 	void ReceiveDamage(Monster*) override;
+	void ReceiveDamage(Projectile*) override;
 
 	void Move(std::vector<Unit*> &units);
 

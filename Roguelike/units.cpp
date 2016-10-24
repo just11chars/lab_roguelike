@@ -6,7 +6,6 @@
 using std::string;
 using std::max;
 using std::min;
-using std::pair;
 using std::vector;
 
 #include "units.h"
@@ -77,21 +76,16 @@ void Character::Draw(WINDOW *window, Point shift)
 	draw_char(window, symbol, r, c, background, color);
 }
 
+void Character::Die()
+{
+	row = -10;
+	invalid = true;
+}
 
 void Character::Hit(Projectile *u)
 {
 	;
 }
-
-void Character::ReceiveDamage(Projectile *u)
-{
-	health -= u->Damage();
-	if (health <= 0) {
-		row = -1;
-		invalid = true;
-	}
-}
-
 
 Peacefull::Peacefull(std::string _name, int _health, int _max_mana, int _damage,
 	Map *_map, int _row, int _col, char _symbol, int _color)
@@ -188,6 +182,12 @@ void Peacefull::ReceiveDamage(Monster *u)
 	}
 }
 
+void Peacefull::ReceiveDamage(Projectile *u)
+{
+	health -= u->Damage();
+	if (health <= 0)
+		Die();
+}
 
 Knight::Knight(string name, Map *_map, int row, int col)
 	: Peacefull(name, 20, 10, 3, _map, row, col, '@', COLOR_YELLOW)
@@ -197,16 +197,35 @@ Knight::Knight(string name, Map *_map, int row, int col)
 
 void Knight::Move(vector<Unit*> &units)
 {
+	Regenerate();
+
 	int key;
-	while (key = getch()) {
+	while (key = getch())
+	{
+		if (key == 'z') {
+			while ((key = getch()) != 'z')
+				if (_key_movements.count(key))
+				{
+					Point *delta = _key_movements[key];
+					if (delta->Length() == 0)
+						continue;
+
+					if (mana >= Iceball::ManaCost()) {
+						mana -= Iceball::ManaCost();
+						units.push_back(new Iceball(this, *delta, map, row, col));
+						return;
+					}
+					else {
+						// message: not enough mana
+					}
+				}
+		}
 		if (_key_movements.count(key)) {
 			Point *delta = _key_movements[key];
 			if (TryMove(units, row + delta->row, col + delta->col))
 				break;
 		}
 	}
-
-	Regenerate();
 }
 
 Princess::Princess(std::string name, Map * _map, int row, int col)
@@ -269,8 +288,7 @@ void Monster::ReceiveDamage(Peacefull *from)
 {
 	health -= from->Damage();
 	if (health <= 0) {
-		invalid = true;
-		row = -1;
+		Die();
 		from->ReceiveExperience(this);
 	}
 }
@@ -280,8 +298,22 @@ void Monster::ReceiveDamage(Monster *u)
 	;
 }
 
+void Monster::ReceiveDamage(Projectile *u)
+{
+	health -= u->Damage();
+	if (health <= 0) {
+		Die();
+		Peacefull *p = dynamic_cast<Peacefull*>(u->Owner());
+		if (p)
+			p->ReceiveExperience(this);
+	}
+}
+
 bool Monster::InRadius(Unit *u)
 {
+	if (dynamic_cast<Princess*>(u))
+		return false;
+
 	Point diff = u->Position() - Position();
 	return dynamic_cast<Peacefull*>(u) && diff.Length() <= visibility_radius;
 }

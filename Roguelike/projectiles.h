@@ -14,7 +14,8 @@ public:
 	int MaxHealth() override;
 	int Health() override;
 	int Damage() override;
-	
+	Unit *Owner();
+
 	Point Position() override;
 	void Draw(WINDOW *window, Point shift) override;
 	void Move(std::vector<Unit*> &units) override;
@@ -50,4 +51,12 @@ class Fireball : public Projectile
 {
 public:
 	Fireball(Unit *owner, Point _direction, Map *_map, int row, int col);
+	static int ManaCost();
+};
+
+class Iceball : public Projectile
+{
+public:
+	Iceball(Unit *owner, Point _direction, Map *_map, int row, int col);
+	static int ManaCost();
 };

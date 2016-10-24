@@ -39,6 +39,11 @@ Point Projectile::Position()
 	return Point(row, col);
 }
 
+Unit* Projectile::Owner()
+{
+	return owner;
+}
+
 void Projectile::Draw(WINDOW *window, Point shift)
 {
 	int r = row - shift.row;
@@ -50,15 +55,14 @@ void Projectile::Draw(WINDOW *window, Point shift)
 
 void Projectile::Die()
 {
-	row = -1;
+	row = -10;
 	invalid = true;
 }
 
 void Projectile::Move(std::vector<Unit*> &units)
 {
 	if (!steps_left) {
-		row = -1;
-		invalid = true;
+		Die();
 		return;
 	}
 
@@ -99,7 +103,9 @@ void Projectile::Hit(Projectile *u)
 
 void Projectile::ReceiveDamage(Unit *u)
 {
-	u->ReceiveDamage(this);
+	// can't beat our creator
+	if (owner != u)
+		u->ReceiveDamage(this);
 	Die();
 }
 
@@ -126,4 +132,20 @@ Fireball::Fireball(Unit *owner, Point _direction, Map *_map, int row, int col)
 	: Projectile("Fireball", owner, 5, _direction, 8, _map, row, col, '*', COLOR_RED)
 {
 	;
+}
+
+int Fireball::ManaCost()
+{
+	return 5;
+}
+
+Iceball::Iceball(Unit *owner, Point _direction, Map *_map, int row, int col)
+	: Projectile("Iceball", owner, 3, _direction, 8, _map, row, col, '*', COLOR_BLUE)
+{
+	;
+}
+
+int Iceball::ManaCost()
+{
+	return 3;
 }

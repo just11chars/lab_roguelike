@@ -48,7 +48,6 @@ void Level::UpdatePlayerInformation()
 	wclear(player_info);
 	box(player_info, 0, 0);
 
-	//mvwaddstr(player_info, 1, (player_info->_maxx - strlen("Player")) / 2, "Player");
 	mvwprintw(player_info, 1, 1, "Level %d ( %d / %d )", player->Level(), player->Experience(), player->NextLevelExperience());
 	mvwprintw(player_info, 3, 1, "%-10s%d / %d", "Health", player->Health(), player->MaxHealth());
 	mvwprintw(player_info, 4, 1, "%-10s%d / %d", "Mana", player->Mana(), player->MaxMana());
