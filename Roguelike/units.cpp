@@ -11,6 +11,7 @@ using std::vector;
 
 #include "units.h"
 #include "map.h"
+#include "projectiles.h"
 
 Character::Character(string _name, int _max_health, int _damage,
 	Map *_map, int _row, int _col, char _symbol, int _color)
@@ -73,12 +74,24 @@ void Character::Draw(WINDOW *window, Point shift)
 	int c = col - shift.col;
 
 	char background = map->GetCell(r, c).bg_color;
-	int pair_index = 1 + 8 * color + background;
-
-	wattron(window, COLOR_PAIR(pair_index));
-	mvwaddch(window, 1 + r, 1 + c, symbol);
-	wattroff(window, COLOR_PAIR(pair_index));
+	draw_char(window, symbol, r, c, background, color);
 }
+
+
+void Character::Hit(Projectile *u)
+{
+	;
+}
+
+void Character::ReceiveDamage(Projectile *u)
+{
+	health -= u->Damage();
+	if (health <= 0) {
+		row = -1;
+		invalid = true;
+	}
+}
+
 
 Peacefull::Peacefull(std::string _name, int _health, int _max_mana, int _damage,
 	Map *_map, int _row, int _col, char _symbol, int _color)
@@ -176,7 +189,6 @@ void Peacefull::ReceiveDamage(Monster *u)
 }
 
 
-
 Knight::Knight(string name, Map *_map, int row, int col)
 	: Peacefull(name, 20, 10, 3, _map, row, col, '@', COLOR_YELLOW)
 {
@@ -268,13 +280,18 @@ void Monster::ReceiveDamage(Monster *u)
 	;
 }
 
+bool Monster::InRadius(Unit *u)
+{
+	Point diff = u->Position() - Position();
+	return dynamic_cast<Peacefull*>(u) && diff.Length() <= visibility_radius;
+}
 
 void Monster::Move(vector<Unit*> &units)
 {
 	for each (Unit *u in units)
 	{
 		Point diff = u->Position() - Position();
-		if (dynamic_cast<Peacefull*>(u) && diff.Length() <= visibility_radius)
+		if (InRadius(u))
 		{
 			if (diff.row)
 				diff.row /= abs(diff.row);
@@ -297,5 +314,27 @@ Zombie::Zombie(Map *_map, int row, int col)
 Dragon::Dragon(Map *_map, int row, int col)
 	: Monster("Dragon", 40, 5, 30, 10, _map, row, col, 'D', COLOR_RED)
 {
+	;
+}
 
+void Dragon::Move(vector<Unit*> &units)
+{
+	// try to throw a fireball
+
+	for each (Unit *u in units) {
+		Point diff = u->Position() - Position();
+
+		if (InRadius(u) && (abs(diff.row) == abs(diff.col) || !diff.row || !diff.col))
+		{
+			if (diff.row)
+				diff.row /= abs(diff.row);
+			if (diff.col)
+				diff.col /= abs(diff.col);
+
+			units.push_back(new Fireball(this, diff, map, row, col));
+			return;
+		}
+	}
+
+	Monster::Move(units);
 }

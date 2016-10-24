@@ -18,6 +18,7 @@ void Level::GenerateRandom(int rows, int cols, WINDOW *wind, std::string playerN
 {
 	map = new Map(rows, cols);
 	player = new Knight(playerName, map, rand() % rows, rand() % cols);
+	//player = new Knight(playerName, map, 15, 15);
 	view = new View(wind, map, player);
 
 	princess = new Princess("princess", map, rand() % rows, rand() % cols);
@@ -26,14 +27,15 @@ void Level::GenerateRandom(int rows, int cols, WINDOW *wind, std::string playerN
 
 	GenerateUnits<Zombie>(rows / 3 + cols / 3, rows, cols);
 	GenerateUnits<Dragon>(rows / 30 + cols / 30, rows, cols);
+	//GenerateUnits<Dragon>(1, 1, 1);
 }
 
 bool Level::Iterate()
 {
 	ClearInvalidUnits();
 
-	for each (Unit *u in units)
-		u->Move(units);
+	for (int i = 0; i < units.size(); ++i)
+		units[i]->Move(units);
 
 	UpdatePlayerInformation();
 	view->Update(units);

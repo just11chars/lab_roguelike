@@ -34,6 +34,20 @@ bool rand_event(double prob)
 	return (double)rand() / RAND_MAX < prob;
 }
 
+void draw_char(WINDOW *window, int symbol, int row, int col, int bg_col, int front_col)
+{
+	int pair_index = 1 + 8 * front_col + bg_col;
+
+	wattron(window, COLOR_PAIR(pair_index));
+	mvwaddch(window, 1 + row, 1 + col, symbol);
+	wattroff(window, COLOR_PAIR(pair_index));
+}
+
+Point::Point()
+{
+	;
+}
+
 Point::Point(int _row, int _col)
 {
 	row = _row;

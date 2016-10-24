@@ -6,6 +6,7 @@
 
 class Peacefull;
 class Monster;
+class Projectile;
 
 class Unit
 {
@@ -22,10 +23,12 @@ public:
 	virtual void Hit(Unit*) = 0;
 	virtual void Hit(Peacefull*) = 0;
 	virtual void Hit(Monster*) = 0;
+	virtual void Hit(Projectile*) = 0;
 
 	virtual void ReceiveDamage(Unit*) = 0;
 	virtual void ReceiveDamage(Peacefull*) = 0;
-	virtual void ReceiveDamage(Monster *) = 0;
+	virtual void ReceiveDamage(Monster*) = 0;
+	virtual void ReceiveDamage(Projectile*) = 0;
 
 	friend class Level;
 
@@ -48,6 +51,16 @@ public:
 
 	bool TryMove(std::vector<Unit*> &units, int row, int col);
 	void Draw(WINDOW *window, Point shift) override;
+	
+	void Hit(Projectile*) override;
+	virtual void Hit(Unit*) = 0;
+	virtual void Hit(Peacefull*) = 0;
+	virtual void Hit(Monster*) = 0;
+
+	void ReceiveDamage(Projectile*) override;
+	virtual void ReceiveDamage(Unit*) = 0;
+	virtual void ReceiveDamage(Peacefull*) = 0;
+	virtual void ReceiveDamage(Monster*) = 0;
 
 protected:
 	std::string name;
@@ -78,12 +91,12 @@ public:
 	void Regenerate();
 
 	void Hit(Unit*) override;
-	void Hit(Peacefull*);
-	void Hit(Monster*);
+	void Hit(Peacefull*) override;
+	void Hit(Monster*) override;
 
 	void ReceiveDamage(Unit*) override;
-	void ReceiveDamage(Peacefull*);
-	void ReceiveDamage(Monster*);
+	void ReceiveDamage(Peacefull*) override;
+	void ReceiveDamage(Monster*) override;
 
 protected:
 	static const int level_exp = 15;
@@ -129,16 +142,18 @@ public:
 	int ExperinceAward();
 
 	void Hit(Unit*) override;
-	void Hit(Peacefull*);
-	void Hit(Monster*);
+	void Hit(Peacefull*) override;
+	void Hit(Monster*) override;
 
 	void ReceiveDamage(Unit*) override;
-	void ReceiveDamage(Peacefull*);
-	void ReceiveDamage(Monster*);
+	void ReceiveDamage(Peacefull*) override;
+	void ReceiveDamage(Monster*) override;
 
 	void Move(std::vector<Unit*> &units);
 
-private:
+protected:
+	bool InRadius(Unit*);
+
 	int experience_award;
 	int visibility_radius;
 };
@@ -153,4 +168,5 @@ class Dragon : public Monster
 {
 public:
 	Dragon(Map *_map, int row, int col);
+	void Move(std::vector<Unit*> &units);
 };
