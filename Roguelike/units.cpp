@@ -142,7 +142,7 @@ void Peacefull::ReceiveExperience(Monster *monster)
 		max_health += level_health;
 
 		++level;
-		// level-up message
+		log->AddMessage((LogMessage*)new LogMessageNewLevel(Name(), level));
 	}
 }
 
@@ -198,7 +198,7 @@ void Peacefull::ReceiveDamage(Projectile *u)
 	health -= u->Damage();
 	if (health <= 0) {
 		Die();
-		log->AddMessage((LogMessage*)new LogMessageDeath(u->Owner()->Name(), Name()));
+		log->AddMessage((LogMessage*)new LogMessageCastDeath(u->Owner()->Name(), Name(), u->Name()));
 	}
 	else {
 		log->AddMessage((LogMessage*)new LogMessageCast(u->Owner()->Name(), Name(), u->Name()));
@@ -258,6 +258,7 @@ void Princess::Move(vector<Unit*> &units)
 void Princess::ReceiveDamage(Peacefull *u)
 {
 	saved = true;
+	log->AddMessage((LogMessage*)new LogMessageWin());
 }
 
 bool Princess::IsSaved()
@@ -324,7 +325,7 @@ void Monster::ReceiveDamage(Projectile *u)
 	health -= u->Damage();
 	if (health <= 0) {
 		Die();
-		log->AddMessage((LogMessage*)new LogMessageDeath(u->Owner()->Name(), Name()));
+		log->AddMessage((LogMessage*)new LogMessageCastDeath(u->Owner()->Name(), Name(), u->Name()));
 		
 		Peacefull *p = dynamic_cast<Peacefull*>(u->Owner());
 		if (p)

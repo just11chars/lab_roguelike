@@ -2,40 +2,75 @@
 
 #include "components.h"
 
-LogMessageHit::LogMessageHit(std::string _attacker, std::string _receiver)
+using std::string;
+
+LogMessageHit::LogMessageHit(string _attacker, string _receiver)
 {
 	attacker = _attacker;
 	receiver = _receiver;
 }
 
-std::string LogMessageHit::Text()
+string LogMessageHit::Text()
 {
 	return attacker + " hit " + receiver;
 }
 
-LogMessageCast::LogMessageCast(std::string _attacker, std::string _receiver, std::string _spell)
+LogMessageCast::LogMessageCast(string _attacker, string _receiver, string _spell)
+	: LogMessageHit(_attacker, _receiver)
 {
-	attacker = _attacker;
-	receiver = _receiver;
 	spell = _spell;
 }
 
-std::string LogMessageCast::Text()
+string LogMessageCast::Text()
 {
 	return attacker + " cast " + spell + " to " + receiver;
 }
 
-LogMessageDeath::LogMessageDeath(std::string _attacker, std::string _receiver)
+LogMessageDeath::LogMessageDeath(string _attacker, string _receiver)
+	: LogMessageHit(_attacker, _receiver)
 {
-	attacker = _attacker;
-	receiver = _receiver;
+	;
 }
 
-std::string LogMessageDeath::Text()
+string LogMessageDeath::Text()
 {
 	return attacker + " killed " + receiver;
 }
 
+LogMessageNewLevel::LogMessageNewLevel(string _person, int _level)
+{
+	person = _person;
+	level = _level;
+}
+
+string LogMessageNewLevel::Text()
+{
+	char str_level[5];
+	itoa(level, str_level, 10);
+
+	return person + " received level " + str_level;
+}
+
+LogMessageCastDeath::LogMessageCastDeath(string _attacker, string _receiver, string _spell)
+	: LogMessageCast(_attacker, _receiver, _spell)
+{
+	;
+}
+
+string LogMessageCastDeath::Text()
+{
+	return attacker + " killed " + receiver + " with " + spell;
+}
+
+LogMessageWin::LogMessageWin()
+{
+	;
+}
+
+string LogMessageWin::Text()
+{
+	return "---CONGRATULATIONS, YOU WIN---";
+}
 
 Log::Log(WINDOW *_window)
 {
@@ -49,7 +84,7 @@ void Log::AddMessage(LogMessage *message)
 
 void Log::Display()
 {
-	std::string result;
+	string result;
 	for each (LogMessage *mes in messages)
 		result += mes->Text() + ". ";
 

@@ -5,7 +5,6 @@
 #include "units.h"
 #include "level.h"
 
-
 int main()
 {
 	init();
@@ -18,7 +17,7 @@ int main()
 		for (char j = COLOR_BLACK; j <= COLOR_WHITE; ++j)
 			init_pair(1 + 8 * i + j, i, j);
 
-	Level level(LT_RANDOM, 100, 100, field, "you", player_info, new Log(log_win));
+	Level level(LT_RANDOM, 100, 100, field, "You", player_info, new Log(log_win));
 
 	while (level.Iterate()) {
 		;

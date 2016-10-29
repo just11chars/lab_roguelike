@@ -8,35 +8,56 @@ public:
 	virtual std::string Text() = 0;
 };
 
-class LogMessageHit : LogMessage
+class LogMessageHit : public LogMessage
 {
 public:
 	LogMessageHit(std::string _attacker, std::string _receiver);
 	std::string Text() override;
 
-private:
+protected:
 	std::string attacker, receiver;
 };
 
-class LogMessageCast : LogMessage
+class LogMessageCast : public LogMessageHit
 {
 public:
 	LogMessageCast(std::string _attacker, std::string _receiver, std::string _spell);
-	std::string Text() override;
+	std::string Text();
 
-private:
-	std::string attacker, receiver;
+protected:
 	std::string spell;
 };
 
-class LogMessageDeath : LogMessage
+class LogMessageDeath : public LogMessageHit
 {
 public:
 	LogMessageDeath(std::string _attacker, std::string _receiver);
+	std::string Text();
+};
+
+class LogMessageCastDeath : public LogMessageCast
+{
+public:
+	LogMessageCastDeath(std::string _attacker, std::string _receiver, std::string _spell);
+	std::string Text();
+};
+
+class LogMessageNewLevel : public LogMessage
+{
+public:
+	LogMessageNewLevel(std::string _person, int _level);
 	std::string Text() override;
 
-private:
-	std::string attacker, receiver;
+protected:
+	std::string person;
+	int level;
+};
+
+class LogMessageWin : public LogMessage
+{
+public:
+	LogMessageWin();
+	std::string Text() override;
 };
 
 class Log
