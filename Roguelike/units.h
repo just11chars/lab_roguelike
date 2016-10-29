@@ -127,6 +127,7 @@ class Knight : public Peacefull
 public:
 	Knight(std::string name, Map *_map, int row, int col, Log *_log);
 
+	void Die();
 	FightState State();
 	void ChangeState();
 	void Move(std::vector<Unit*> &units) override;

@@ -227,6 +227,11 @@ void Knight::SetPlayerInfo(PlayerInfo *_player_info)
 	player_info = _player_info;
 }
 
+void Knight::Die()
+{
+	invalid = true;
+}
+
 void Knight::Move(vector<Unit*> &units)
 {
 	Regenerate();

@@ -23,7 +23,10 @@ int main()
 		;
 	}
 
-	getch();
+	while (getch() != 'q') {
+		;
+	}
+
 	endwin();
 	return 0;
 }
