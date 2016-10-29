@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "map.h"
 #include "units.h"
+#include "components.h"
 
 enum LevelType {
 	LT_RANDOM = 0
@@ -14,7 +15,9 @@ enum LevelType {
 class Level
 {
 public:
-	Level(LevelType lt, int map_rows, int map_cols, WINDOW *window, std::string playerName, WINDOW *_player_info);
+	Level(LevelType lt, int map_rows, int map_cols, WINDOW *window, std::string playerName,
+		WINDOW *_player_info, Log *_log);
+
 	void GenerateRandom(int rows, int cols, WINDOW *wind, std::string playerName);
 	bool Iterate();
 
@@ -32,5 +35,6 @@ private:
 
 	Map *map;
 	View *view;
-	WINDOW *player_info;
+	WINDOW *player_info; // TODO: from window* to class
+	Log *log;
 };

@@ -6,22 +6,26 @@ using std::vector;
 #include "utils.h"
 #include "map.h"
 #include "units.h"
+#include "components.h"
 
-Level::Level(LevelType lt, int map_rows, int map_cols, WINDOW *window, std::string playerName, WINDOW *_player_info)
+Level::Level(LevelType lt, int map_rows, int map_cols, WINDOW *window, std::string playerName,
+	WINDOW *_player_info,  Log *_log)
 {
+	player_info = _player_info;
+	log = _log;
+
 	if (lt == LT_RANDOM)
 		GenerateRandom(map_rows, map_cols, window, playerName);
-	player_info = _player_info;
 }
 
 void Level::GenerateRandom(int rows, int cols, WINDOW *wind, std::string playerName)
 {
 	map = new Map(rows, cols);
-	player = new Knight(playerName, map, rand() % rows, rand() % cols);
+	player = new Knight(playerName, map, rand() % rows, rand() % cols, log);
 	//player = new Knight(playerName, map, 15, 15);
 	view = new View(wind, map, player);
 
-	princess = new Princess("princess", map, rand() % rows, rand() % cols);
+	princess = new Princess("princess", map, rand() % rows, rand() % cols, log);
 	units.push_back(player);
 	units.push_back(princess);
 
@@ -39,6 +43,7 @@ bool Level::Iterate()
 
 	UpdatePlayerInformation();
 	view->Update(units);
+	log->Display();
 
 	return player->Health() > 0 && !princess->IsSaved();
 }
@@ -88,6 +93,6 @@ void Level::GenerateUnits(int count, int rows, int cols)
 			col = rand() % cols;
 		}
 
-		units.push_back(new T(map, row, col));
+		units.push_back(new T(map, row, col, log));
 	}
 }

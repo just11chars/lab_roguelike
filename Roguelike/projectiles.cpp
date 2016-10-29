@@ -1,9 +1,11 @@
 #include "projectiles.h"
+#include "components.h"
 
 Projectile::Projectile(std::string _name, Unit *_owner, int _damage,
 	Point _direction, int _steps_left,
 	Map *_map, int _row, int _col,
-	char _symbol, int _color)
+	char _symbol, int _color,
+	Log *_log)
 	: direction(_direction)
 {
 	name = _name;
@@ -17,6 +19,8 @@ Projectile::Projectile(std::string _name, Unit *_owner, int _damage,
 
 	symbol = _symbol;
 	color = _color;
+
+	log = _log;
 }
 
 int Projectile::MaxHealth()
@@ -42,6 +46,11 @@ Point Projectile::Position()
 Unit* Projectile::Owner()
 {
 	return owner;
+}
+
+std::string Projectile::Name()
+{
+	return name;
 }
 
 void Projectile::Draw(WINDOW *window, Point shift)
@@ -104,9 +113,10 @@ void Projectile::Hit(Projectile *u)
 void Projectile::ReceiveDamage(Unit *u)
 {
 	// can't beat our creator
-	if (owner != u)
+	if (owner != u) {
 		u->ReceiveDamage(this);
-	Die();
+		Die();
+	}
 }
 
 void Projectile::ReceiveDamage(Peacefull *u)
@@ -128,8 +138,8 @@ void Projectile::ReceiveDamage(Projectile *u)
 	u->ReceiveDamage(this);
 }
 
-Fireball::Fireball(Unit *owner, Point _direction, Map *_map, int row, int col)
-	: Projectile("Fireball", owner, 5, _direction, 8, _map, row, col, '*', COLOR_RED)
+Fireball::Fireball(Unit *owner, Point _direction, Map *_map, int row, int col, Log *_log)
+	: Projectile("Fireball", owner, 5, _direction, 8, _map, row, col, '*', COLOR_RED, _log)
 {
 	;
 }
@@ -139,8 +149,8 @@ int Fireball::ManaCost()
 	return 5;
 }
 
-Iceball::Iceball(Unit *owner, Point _direction, Map *_map, int row, int col)
-	: Projectile("Iceball", owner, 3, _direction, 8, _map, row, col, '*', COLOR_BLUE)
+Iceball::Iceball(Unit *owner, Point _direction, Map *_map, int row, int col, Log *_log)
+	: Projectile("Iceball", owner, 3, _direction, 8, _map, row, col, '*', COLOR_BLUE, _log)
 {
 	;
 }

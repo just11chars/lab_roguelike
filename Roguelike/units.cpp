@@ -13,7 +13,8 @@ using std::vector;
 #include "projectiles.h"
 
 Character::Character(string _name, int _max_health, int _damage,
-	Map *_map, int _row, int _col, char _symbol, int _color)
+	Map *_map, int _row, int _col, char _symbol, int _color,
+	Log *_log)
 {
 	name = _name;
 	health = _max_health;
@@ -26,6 +27,8 @@ Character::Character(string _name, int _max_health, int _damage,
 
 	symbol = _symbol;
 	color = _color;
+
+	log = _log;
 }
 
 int Character::Health()
@@ -46,6 +49,11 @@ int Character::Damage()
 Point Character::Position()
 {
 	return Point(row, col);
+}
+
+std::string Character::Name()
+{
+	return name;
 }
 
 bool Character::TryMove(vector<Unit*> &units, int _row, int _col)
@@ -88,8 +96,8 @@ void Character::Hit(Projectile *u)
 }
 
 Peacefull::Peacefull(std::string _name, int _health, int _max_mana, int _damage,
-	Map *_map, int _row, int _col, char _symbol, int _color)
-	: Character(_name, _health, _damage, _map, _row, _col, _symbol, _color)
+	Map *_map, int _row, int _col, char _symbol, int _color, Log *_log)
+	: Character(_name, _health, _damage, _map, _row, _col, _symbol, _color, _log)
 {
 	max_mana = _max_mana;
 	mana = _max_mana;
@@ -178,19 +186,27 @@ void Peacefull::ReceiveDamage(Monster *u)
 {
 	health -= u->Damage();
 	if (health <= 0) {
-		// some death message
+		log->AddMessage((LogMessage*)new LogMessageDeath(u->Name(), Name()));
+	}
+	else {
+		log->AddMessage((LogMessage*) new LogMessageHit(u->Name(), Name()));
 	}
 }
 
 void Peacefull::ReceiveDamage(Projectile *u)
 {
 	health -= u->Damage();
-	if (health <= 0)
+	if (health <= 0) {
 		Die();
+		log->AddMessage((LogMessage*)new LogMessageDeath(u->Owner()->Name(), Name()));
+	}
+	else {
+		log->AddMessage((LogMessage*)new LogMessageCast(u->Owner()->Name(), Name(), u->Name()));
+	}
 }
 
-Knight::Knight(string name, Map *_map, int row, int col)
-	: Peacefull(name, 20, 10, 3, _map, row, col, '@', COLOR_YELLOW)
+Knight::Knight(string name, Map *_map, int row, int col, Log *_log)
+	: Peacefull(name, 20, 10, 3, _map, row, col, '@', COLOR_YELLOW, _log)
 {
 	;
 }
@@ -212,7 +228,7 @@ void Knight::Move(vector<Unit*> &units)
 
 					if (mana >= Iceball::ManaCost()) {
 						mana -= Iceball::ManaCost();
-						units.push_back(new Iceball(this, *delta, map, row, col));
+						units.push_back(new Iceball(this, *delta, map, row, col, log));
 						return;
 					}
 					else {
@@ -228,8 +244,8 @@ void Knight::Move(vector<Unit*> &units)
 	}
 }
 
-Princess::Princess(std::string name, Map * _map, int row, int col)
-	: Peacefull(name, 10000, 0, 0, _map, row, col, 'P', COLOR_YELLOW)
+Princess::Princess(std::string name, Map * _map, int row, int col, Log *_log)
+	: Peacefull(name, 10000, 0, 0, _map, row, col, 'P', COLOR_YELLOW, _log)
 {
 	saved = false;
 }
@@ -251,8 +267,8 @@ bool Princess::IsSaved()
 
 Monster::Monster(std::string _name, int _health, int _damage,
 	int _exp_award, int _vis_radius,
-	Map *_map, int _row, int _col, char _symbol, int _color)
-	: Character(_name, _health, _damage, _map, _row, _col, _symbol, _color)
+	Map *_map, int _row, int _col, char _symbol, int _color, Log *_log)
+	: Character(_name, _health, _damage, _map, _row, _col, _symbol, _color, _log)
 {
 	experience_award = _exp_award;
 	visibility_radius = _vis_radius;
@@ -284,12 +300,17 @@ void Monster::ReceiveDamage(Unit *u)
 	;
 }
 
-void Monster::ReceiveDamage(Peacefull *from)
+void Monster::ReceiveDamage(Peacefull *u)
 {
-	health -= from->Damage();
+	health -= u->Damage();
 	if (health <= 0) {
 		Die();
-		from->ReceiveExperience(this);
+		log->AddMessage((LogMessage*)new LogMessageDeath(u->Name(), Name()));
+
+		u->ReceiveExperience(this);
+	}
+	else {
+		log->AddMessage((LogMessage*)new LogMessageHit(u->Name(), Name()));
 	}
 }
 
@@ -303,9 +324,14 @@ void Monster::ReceiveDamage(Projectile *u)
 	health -= u->Damage();
 	if (health <= 0) {
 		Die();
+		log->AddMessage((LogMessage*)new LogMessageDeath(u->Owner()->Name(), Name()));
+		
 		Peacefull *p = dynamic_cast<Peacefull*>(u->Owner());
 		if (p)
 			p->ReceiveExperience(this);
+	}
+	else {
+		log->AddMessage((LogMessage*)new LogMessageCast(u->Owner()->Name(), Name(), u->Name()));
 	}
 }
 
@@ -337,14 +363,14 @@ void Monster::Move(vector<Unit*> &units)
 	}
 }
 
-Zombie::Zombie(Map *_map, int row, int col)
-	: Monster("Zombie", 10, 2, 4, 8, _map, row, col, 'Z', COLOR_CYAN)
+Zombie::Zombie(Map *_map, int row, int col, Log *_log)
+	: Monster("Zombie", 10, 2, 4, 8, _map, row, col, 'Z', COLOR_CYAN, _log)
 {
 	;
 }
 
-Dragon::Dragon(Map *_map, int row, int col)
-	: Monster("Dragon", 40, 5, 30, 10, _map, row, col, 'D', COLOR_RED)
+Dragon::Dragon(Map *_map, int row, int col, Log *_log)
+	: Monster("Dragon", 40, 5, 30, 10, _map, row, col, 'D', COLOR_RED, _log)
 {
 	;
 }
@@ -363,7 +389,7 @@ void Dragon::Move(vector<Unit*> &units)
 			if (diff.col)
 				diff.col /= abs(diff.col);
 
-			units.push_back(new Fireball(this, diff, map, row, col));
+			units.push_back(new Fireball(this, diff, map, row, col, log));
 			return;
 		}
 	}

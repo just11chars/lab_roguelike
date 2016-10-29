@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "map.h"
+#include "components.h"
 
 class Peacefull;
 class Monster;
@@ -14,6 +15,7 @@ public:
 	virtual int MaxHealth() = 0;
 	virtual int Health() = 0;
 	virtual int Damage() = 0;
+	virtual std::string Name() = 0;
 
 	virtual void Move(std::vector<Unit*> &units) = 0;
 
@@ -34,6 +36,7 @@ public:
 
 protected:
 	bool invalid = false;
+	Log *log;
 };
 
 class Map;
@@ -42,12 +45,14 @@ class Character: public Unit
 {
 public:
 	Character(std::string _name, int _health, int _damage,
-		Map *_map, int _row, int _col, char _symbol, int _color);
+		Map *_map, int _row, int _col, char _symbol, int _color,
+		Log *_log);
 	
 	int Health() override;
 	int MaxHealth() override;
 	int Damage() override;
 	Point Character::Position() override;
+	std::string Name();
 
 	bool TryMove(std::vector<Unit*> &units, int row, int col);
 	void Draw(WINDOW *window, Point shift) override;
@@ -75,7 +80,8 @@ class Peacefull : public Character
 {
 public:
 	Peacefull(std::string _name, int _health, int _mana, int _damage,
-		Map *_map, int _row, int _col, char _symbol, int _color);
+		Map *_map, int _row, int _col, char _symbol, int _color,
+		Log *_log);
 
 	int Level();
 	int Experience();
@@ -112,7 +118,7 @@ protected:
 class Knight : public Peacefull
 {
 public:
-	Knight(std::string name, Map *_map, int row, int col);
+	Knight(std::string name, Map *_map, int row, int col, Log *_log);
 
 	void Move(std::vector<Unit*> &units) override;
 };
@@ -120,7 +126,7 @@ public:
 class Princess : public Peacefull
 {
 public:
-	Princess(std::string name, Map *_map, int row, int col);
+	Princess(std::string name, Map *_map, int row, int col, Log *_log);
 
 	void Move(std::vector<Unit*> &units) override;
 	void ReceiveDamage(Peacefull *u);
@@ -135,7 +141,8 @@ class Monster : public Character
 public:
 	Monster(std::string _name, int _health, int _damage,
 		int _exp_award, int _vis_radius,
-		Map *_map, int _row, int _col, char _symbol, int _color);
+		Map *_map, int _row, int _col, char _symbol, int _color,
+		Log *_log);
 
 	int ExperinceAward();
 
@@ -160,12 +167,12 @@ protected:
 class Zombie : public Monster
 {
 public:
-	Zombie(Map *_map, int row, int col);
+	Zombie(Map *_map, int row, int col, Log *_log);
 };
 
 class Dragon : public Monster
 {
 public:
-	Dragon(Map *_map, int row, int col);
+	Dragon(Map *_map, int row, int col, Log *_log);
 	void Move(std::vector<Unit*> &units);
 };

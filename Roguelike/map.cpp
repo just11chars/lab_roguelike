@@ -18,7 +18,7 @@ void init_cell_types()
 {
 	_cells.resize(sizeof(CellState));
 	_cells[CS_UNDEF] = Cell(COLOR_WHITE, COLOR_BLACK, '?');
-	_cells[CS_GROUND] = Cell(COLOR_WHITE, COLOR_BLACK, '.');
+	_cells[CS_GROUND] = Cell(COLOR_WHITE, COLOR_BLACK, ' ');
 	_cells[CS_WALL] = Cell(COLOR_WHITE, COLOR_BLACK, '#');
 	_cells[CS_CURSED] = Cell(COLOR_CYAN, COLOR_MAGENTA, '.');
 
