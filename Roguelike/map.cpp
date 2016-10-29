@@ -125,7 +125,7 @@ Rect View::GetMapRect()
 	return Rect(r0, c0, r1, c1);
 }
 
-void View::Update(vector<Unit*> &units)
+void View::Display(vector<Unit*> &units)
 {
 	Rect rect(GetMapRect());
 	

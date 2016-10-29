@@ -208,7 +208,23 @@ void Peacefull::ReceiveDamage(Projectile *u)
 Knight::Knight(string name, Map *_map, int row, int col, Log *_log)
 	: Peacefull(name, 20, 10, 3, _map, row, col, '@', COLOR_YELLOW, _log)
 {
-	;
+	fight_state = FS_MELEE;
+}
+
+FightState Knight::State()
+{
+	return fight_state;
+}
+
+void Knight::ChangeState()
+{
+	fight_state = FightState(!fight_state);
+	player_info->Display();
+}
+
+void Knight::SetPlayerInfo(PlayerInfo *_player_info)
+{
+	player_info = _player_info;
 }
 
 void Knight::Move(vector<Unit*> &units)
@@ -219,6 +235,8 @@ void Knight::Move(vector<Unit*> &units)
 	while (key = getch())
 	{
 		if (key == 'z') {
+			ChangeState();
+
 			while ((key = getch()) != 'z')
 				if (_key_movements.count(key))
 				{
@@ -229,12 +247,15 @@ void Knight::Move(vector<Unit*> &units)
 					if (mana >= Iceball::ManaCost()) {
 						mana -= Iceball::ManaCost();
 						units.push_back(new Iceball(this, *delta, map, row, col, log));
+						ChangeState();
 						return;
 					}
 					else {
 						// message: not enough mana
 					}
 				}
+
+			ChangeState();
 		}
 		if (_key_movements.count(key)) {
 			Point *delta = _key_movements[key];

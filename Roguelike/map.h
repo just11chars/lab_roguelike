@@ -49,7 +49,7 @@ public:
 	// TODO: safe pointers
 	View(WINDOW *wind, Map *_map, Character *_player);
 	Rect GetMapRect();
-	void Update(std::vector<Unit*> &units);
+	void Display(std::vector<Unit*> &units);
 
 private:
 	WINDOW *window;

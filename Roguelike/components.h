@@ -2,6 +2,8 @@
 #include <vector>
 #include <curses.h>
 
+#include "units.h"
+
 class LogMessage
 {
 public:
@@ -60,10 +62,14 @@ public:
 	std::string Text() override;
 };
 
+class Knight;
+
 class Log
 {
 public:
 	Log(WINDOW *_window);
+	~Log();
+
 	void AddMessage(LogMessage*);
 	void Display();
 
@@ -71,5 +77,16 @@ private:
 	void DeleteMessages();
 
 	std::vector<LogMessage*> messages;
+	WINDOW *window, *border;
+};
+
+class PlayerInfo
+{
+public:
+	PlayerInfo(Knight *_player, WINDOW *_window);
+	void Display();
+
+private:
+	Knight *player;
 	WINDOW *window;
 };

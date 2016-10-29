@@ -8,6 +8,8 @@
 class Peacefull;
 class Monster;
 class Projectile;
+class Log;
+class PlayerInfo;
 
 class Unit
 {
@@ -115,12 +117,24 @@ protected:
 	int regen;
 };
 
+enum FightState {
+	FS_MELEE = 0,
+	FS_WIZARD = 1,
+};
+
 class Knight : public Peacefull
 {
 public:
 	Knight(std::string name, Map *_map, int row, int col, Log *_log);
 
+	FightState State();
+	void ChangeState();
 	void Move(std::vector<Unit*> &units) override;
+	void SetPlayerInfo(PlayerInfo *_player_info);
+
+protected:
+	FightState fight_state;
+	PlayerInfo *player_info;
 };
 
 class Princess : public Peacefull
