@@ -1,0 +1,7 @@
+sizes_and_cnt{
+"zombie_koeff"="30"
+"dragon_koeff"="5"
+"field_width"="100"
+"field_height"="100"
+}
+

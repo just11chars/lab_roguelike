@@ -17,6 +17,7 @@ class Level
 public:
 	Level(LevelType lt, int map_rows, int map_cols, WINDOW *window, std::string playerName,
 		WINDOW *_player_info_win, Log *_log);
+	~Level();
 
 	void GenerateRandom(int rows, int cols, WINDOW *wind, std::string playerName);
 	bool Iterate();

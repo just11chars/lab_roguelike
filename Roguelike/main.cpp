@@ -4,6 +4,7 @@
 #include "map.h"
 #include "units.h"
 #include "level.h"
+#include "config.h"
 
 int main()
 {
@@ -17,9 +18,12 @@ int main()
 	WINDOW *player_info = newwin(10, 25, 0, 72);
 	WINDOW *log_win = newwin(5, 70, 0, 2);
 
-	Level level(LT_RANDOM, 100, 100, field, "You", player_info, new Log(log_win));
+	int rows = config.sizes["field_height"];
+	int cols = config.sizes["field_width"];
 
-	while (level.Iterate()) {
+	Level *level = new Level(LT_RANDOM, rows, cols, field, "You", player_info, new Log(log_win));
+
+	while (level->Iterate()) {
 		;
 	}
 
@@ -27,6 +31,7 @@ int main()
 		;
 	}
 
+	delete level;
 	endwin();
 	return 0;
 }

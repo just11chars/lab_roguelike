@@ -7,6 +7,7 @@ using std::vector;
 #include "map.h"
 #include "units.h"
 #include "components.h"
+#include "config.h"
 
 Level::Level(LevelType lt, int map_rows, int map_cols, WINDOW *window, std::string playerName,
 	WINDOW *_player_info_win,  Log *_log)
@@ -20,6 +21,12 @@ Level::Level(LevelType lt, int map_rows, int map_cols, WINDOW *window, std::stri
 	Display();
 }
 
+Level::~Level()
+{
+	delete log;
+	delete map;
+}
+
 void Level::GenerateRandom(int rows, int cols, WINDOW *wind, std::string playerName)
 {
 	map = new Map(rows, cols);
@@ -31,8 +38,11 @@ void Level::GenerateRandom(int rows, int cols, WINDOW *wind, std::string playerN
 	units.push_back(player);
 	units.push_back(princess);
 
-	GenerateUnits<Zombie>(rows / 3 + cols / 3, rows, cols);
-	GenerateUnits<Dragon>(rows / 30 + cols / 30, rows, cols);
+	int zc = config.sizes["zombie_coeff"];
+	int dc = config.sizes["dragon_coeff"];
+
+	GenerateUnits<Zombie>(rows / zc + cols / zc, rows, cols);
+	GenerateUnits<Dragon>(rows / dc + cols / dc, rows, cols);
 	//GenerateUnits<Dragon>(1, 1, 1);
 }
 

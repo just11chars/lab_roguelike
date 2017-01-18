@@ -46,7 +46,7 @@ LogMessageNewLevel::LogMessageNewLevel(string _person, int _level)
 string LogMessageNewLevel::Text()
 {
 	char str_level[5];
-	itoa(level, str_level, 10);
+	_itoa_s(level, str_level, 10);
 
 	return person + " received level " + str_level;
 }

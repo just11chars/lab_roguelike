@@ -1,0 +1,7 @@
+sizes{
+"zombie_coeff"="3"
+"dragon_coeff"="20"
+"field_width"="100"
+"field_height"="100"
+}
+
